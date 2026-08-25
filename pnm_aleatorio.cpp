@@ -8,7 +8,7 @@
 #define MAX(X, Y) ((X > Y) ? X : Y)//condição ternária (mais rápida de ser execultada)
 
 int main(void){
-    //srand(time(NULL));//colocar apenas uma vez no main!
+    srand(time(NULL));//colocar apenas uma vez no main!
 
 
     char arq[50];
@@ -20,10 +20,11 @@ int main(void){
 
     SolucaoBIN solB;
     memset(&solB, 0, sizeof(SolucaoBIN));//Vai zerar a matriz inteira! função conhecida como (zero-biting)
-    solB.mat_sol[0][0] = 1;
-    solB.mat_sol[0][1] = 1;
-    solB.mat_sol[1][0] = 1;
-    solB.mat_sol[1][2] = 1;
+    for(int i = 0; i < num_moc; i ++){
+        for(int j = 0; j < num_obj; j++){
+            solB.mat_sol[i][j] = rand() % 2;
+        }
+    }
 
     clock_t h1;
     h1 = clock();
@@ -37,10 +38,9 @@ int main(void){
     printf("\n");
 
     Solucao sol;
-    sol.vet_sol[0] = 0;
-    sol.vet_sol[1] = 0;
-    sol.vet_sol[2] = 1;
-    sol.vet_sol[3] = -1;
+    for(int j = 0; j < num_obj; j ++){
+        sol.vet_sol[j] = rand() % (num_moc + 1) - 1;
+    }
 
     clock_t h;
     h = clock();
