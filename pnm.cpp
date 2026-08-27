@@ -8,11 +8,9 @@
 #define MAX(X, Y) ((X > Y) ? X : Y)//condição ternária (mais rápida de ser execultada)
 
 int main(void){
-    //srand(time(NULL));//colocar apenas uma vez no main!
-
 
     char arq[50];
-    strcpy(arq, "pmm3.txt");//Vai copiar o texto pnm1 para o array arq!
+    strcpy(arq, "pmm1.txt");//Vai copiar o texto pnm1 para o array arq!
     //OBS caso de erro coloque "..//" para sair do diretório e entrar em outro
     ler_dados(arq);
     //strcpy(arq, "");
