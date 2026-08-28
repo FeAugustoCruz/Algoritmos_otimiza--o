@@ -1,9 +1,11 @@
+//Número total de possíveis conflitos de cada região.
 #define MAX_CONFLI 99
 //Numero total de regiões (num_pont * num_posi)
-#define MAX_PONTS 100
+#define MAX_REGIAO 100
 
 typedef struct tSolucao{
-    
+    //posições da solução
+    int vet_posi[25];
     int fo;
 }Solucao;
 
@@ -14,11 +16,15 @@ typedef struct tConflito{
     
 }Conflito;
 
-Conflito conflitos[MAX_PONTS]; 
+Conflito conflitos[MAX_REGIAO];
+//Quantidade de pontos no mapa. 
 int num_pont;
-int num_posi;
+//Quantodade de posições possíveis no caso 4.
+int qtd_posi;
 
 
 void ler_dados(char* arq);
 void testar_dados(char* arq);
 void escrever_solucao(Solucao& s);
+void calcula_FO(Solucao& s);
+void escrever_sol(Solucao& s);
