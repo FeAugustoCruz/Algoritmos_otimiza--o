@@ -20,7 +20,6 @@ int main(void){
     //for(int j = 0; j < num_obj; j ++){
     //    printf("%d ", vet_ind_obj_ord[j]);
     //}
-    printf("\n");
     clock_t h;
     double tempoA, tempoG, tempoAG;
     Solucao solA, solG, solAG;
@@ -30,7 +29,7 @@ int main(void){
     tempoA = ((double)(clock() - h)) / CLOCKS_PER_SEC;
     heu_con_gul(solG);
     tempoG = ((double)(clock() - h)) / CLOCKS_PER_SEC;
-    heu_con_ale_gul(solAG, 60);
+    heu_con_ale_gul(solAG, 5);
     tempoAG = ((double)(clock() - h)) / CLOCKS_PER_SEC;
 
 
@@ -136,7 +135,7 @@ void heu_con_ale_gul(Solucao& s, const int per_ale){
 
     //Embaralhando o vetor aqui!
     for(int i = 0; i < qtde; i++){
-        int pos = i + rand() % (qtde - i);
+        int pos = i + rand() % (num_obj - i);
         int aux = vet_aux[i];
         vet_aux[i] = vet_aux[pos];
         vet_aux[pos] = aux;

@@ -28,6 +28,8 @@ int vet_ind_obj_ord[MAX_OBJ];
 
 void heu_con_ale(Solucao& s);
 void heu_con_gul(Solucao& s);
+    //essa heuristica utiliza de um percentual de aleatoriedade para gerar outras soluções viáveis
+    
 void heu_con_ale_gul(Solucao& s, const int per_ale);
 void ordenar_objetos();
 
