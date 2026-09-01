@@ -24,7 +24,12 @@ int vet_val_obj[MAX_OBJ];
 int vet_pes_obj[MAX_OBJ];
 int vet_cap_moc[MAX_MOC];
 //-> Sempre usar procedimentos em vez de funções! pois funções alocam mais memória
+int vet_ind_obj_ord[MAX_OBJ];
 
+void heu_con_ale(Solucao& s);
+void heu_con_gul(Solucao& s);
+void heu_con_ale_gul(Solucao& s, const int per_ale);
+void ordenar_objetos();
 
 void calcular_FO(Solucao& s);
 void escrever_sol(Solucao& s);

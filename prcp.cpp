@@ -19,9 +19,10 @@ int main(void){
         printf("%d", solucao.vet_posi[i]);
     }
 
-    //strcpy(arq, "");
-    //testar_dados(arq);
-
+    strcpy(arq, "");
+    testar_dados(arq);
+    calcula_FO(solucao);
+    escrever_sol(solucao);
 
     return 0;
 }
@@ -35,7 +36,7 @@ void ler_dados(char* arq){
         fscanf(f, "%d", &conflitos[i].num_conflito);
         for(int j = 0; j < conflitos[i].num_conflito; j ++){
             fscanf(f, "%d", &conflitos[i].vet_id[j]);
-            conflitos[i].vet_id[j]--;
+            conflitos[i].vet_id[j]--;//estoiu amarzzenando como zero
         }
     }
 
@@ -58,6 +59,7 @@ void testar_dados(char* arq){
         fprintf(f,"%d\n", conflitos[i].num_conflito);
         for (int j = 0; j < conflitos[i].num_conflito; j++)
         {
+            //fprintf(f,"%d ", conflitos[i].vet_id[j]);
             fprintf(f,"%d ", conflitos[i].vet_id[j] + 1);
         }
         printf("\n");
@@ -78,7 +80,7 @@ void calcula_FO(Solucao& s){
 
         for (int k = 0; k < conflitos[regiao_i].num_conflito && livre; k++){
             int regiao_conf = conflitos[regiao_i].vet_id[k];
-
+            
             int ponto_conf    = regiao_conf / qtd_posi;
             int posicao_conf  = regiao_conf % qtd_posi;
 
@@ -94,5 +96,8 @@ void calcula_FO(Solucao& s){
 }
 
 void escrever_sol(Solucao& s){
-    
+    printf("FO: %d\n", s.fo);
+    for(int i = 0; i < num_pont; i ++){
+        printf("%d  ", s.vet_posi[i]);
+    }
 }

@@ -8,15 +8,46 @@
 #define MAX(X, Y) ((X > Y) ? X : Y)//condição ternária (mais rápida de ser execultada)
 
 int main(void){
+    srand(time(NULL));
+
 
     char arq[50];
-    strcpy(arq, "pmm1.txt");//Vai copiar o texto pnm1 para o array arq!
+    strcpy(arq, "pmm3.txt");//Vai copiar o texto pnm1 para o array arq!
     //OBS caso de erro coloque "..//" para sair do diretório e entrar em outro
     ler_dados(arq);
+
+    ordenar_objetos();
+    //for(int j = 0; j < num_obj; j ++){
+    //    printf("%d ", vet_ind_obj_ord[j]);
+    //}
+    printf("\n");
+    clock_t h;
+    double tempoA, tempoG, tempoAG;
+    Solucao solA, solG, solAG;
+    h = clock();
+
+    heu_con_ale(solA);
+    tempoA = ((double)(clock() - h)) / CLOCKS_PER_SEC;
+    heu_con_gul(solG);
+    tempoG = ((double)(clock() - h)) / CLOCKS_PER_SEC;
+    heu_con_ale_gul(solAG, 60);
+    tempoAG = ((double)(clock() - h)) / CLOCKS_PER_SEC;
+
+
+    calcular_FO(solA);
+    calcular_FO(solG);
+    calcular_FO(solAG);
+    
+
+
+    printf("FOA: %d\t tempo %.5f\n", solA.fo, tempoA);
+    printf("FOG: %d\t tempo %.5f\n", solG.fo, tempoG);
+    printf("FOAG: %d\t tempo %.5f\n", solAG.fo, tempoAG);
+    //escrever_sol(solA);
     //strcpy(arq, "");
     //testar_dados(arq);
 
-    SolucaoBIN solB;
+    /*SolucaoBIN solB;
     memset(&solB, 0, sizeof(SolucaoBIN));//Vai zerar a matriz inteira! função conhecida como (zero-biting)
     solB.mat_sol[0][0] = 1;
     solB.mat_sol[0][1] = 1;
@@ -47,10 +78,85 @@ int main(void){
     }
 
     double tempo = ((double)(clock() - h)) / CLOCKS_PER_SEC;
-    printf("FO %d\tTempo: %.5f\n", sol.fo, tempo);
+    printf("FO %d\tTempo: %.5f\n", sol.fo, tempo);*/
     return 0;
 
-    escrever_sol(sol);
+    //escrever_sol(sol);
+}
+
+void ordenar_objetos(){
+    for(int j = 0; j < num_obj; j ++){
+        vet_ind_obj_ord[j] = j;
+    }
+    int flag = 1;
+    //bouble shot
+    while (flag)
+    {
+        flag = 0;
+        for(int j = 0; j < num_obj - 1; j++){
+            //casting par aevitar erro de divisão inteira!
+            if((double)vet_val_obj[vet_ind_obj_ord[j]]/vet_pes_obj[vet_ind_obj_ord[j]] < (double)vet_val_obj[vet_ind_obj_ord[j + 1]]/ vet_pes_obj[vet_ind_obj_ord[j + 1]] ){//->? não entendi!
+                int aux = vet_ind_obj_ord[j];
+                vet_ind_obj_ord[j] = vet_ind_obj_ord[j + 1];
+                vet_ind_obj_ord[j + 1] = aux;
+                flag = 1;
+            }
+        }
+    }
+    
+}
+
+//Escolhendo valores aleatórios para uma solução possivel
+void heu_con_ale(Solucao& s){
+    for (int j = 0; j < num_obj; j ++){
+        s.vet_sol[j] = rand() % (num_moc + 1) - 1;
+    }
+}
+//Usa o conceito de valor peso para gerar uma solução viável
+void heu_con_gul(Solucao& s){
+    memset(&s.vet_pesos, 0, sizeof(s.vet_pesos));
+    memset(&s.vet_sol, -1, sizeof(s.vet_sol));
+    for(int j = 0; j < num_obj; j++){
+        int obj = vet_ind_obj_ord[j];
+        for(int i = 0; i < num_moc; i++){
+            if(vet_pes_obj[obj] + s.vet_pesos[i] <= vet_cap_moc[i]){
+                s.vet_sol[obj] = i;
+                s.vet_pesos[i] += vet_pes_obj[obj];
+                break;
+            }
+        }
+    }
+}
+
+void heu_con_ale_gul(Solucao& s, const int per_ale){
+    int vet_aux[MAX_OBJ];
+    memcpy(&vet_aux, &vet_ind_obj_ord, sizeof(vet_ind_obj_ord));
+    //Obter a quantidade de objeto.
+    int qtde = MAX(1, (per_ale/ 100.0) * num_obj);
+
+    //Embaralhando o vetor aqui!
+    for(int i = 0; i < qtde; i++){
+        int pos = i + rand() % (qtde - i);
+        int aux = vet_aux[i];
+        vet_aux[i] = vet_aux[pos];
+        vet_aux[pos] = aux;
+
+
+    }
+    //Parte do código da gulosa 
+    memset(&s.vet_pesos, 0, sizeof(s.vet_pesos));
+    memset(&s.vet_sol, -1, sizeof(s.vet_sol));
+    for(int j = 0; j < num_obj; j++){
+        //Troquei o vetor ordenado pelo embaralhado
+        int obj = vet_aux[j];
+        for(int i = 0; i < num_moc; i++){
+            if(vet_pes_obj[obj] + s.vet_pesos[i] <= vet_cap_moc[i]){
+                s.vet_sol[obj] = i;
+                s.vet_pesos[i] += vet_pes_obj[obj];
+                break;
+            }
+        }
+    }
 }
 
 void calcular_FOBIN(SolucaoBIN& s){
