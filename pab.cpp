@@ -14,17 +14,30 @@ int main(void){
     strcpy(arq, "i01.txt");
     ler_dados(arq);
     for(int i = 0; i < num_berco; i ++){
-        solucao.qtd_berco[i] = rand() % num_berco;
+        solucao.qtd_berco[i] = num_navio;
         for(int j = 0; j < num_navio; j ++){
-            solucao.t_atracacao[i][j] = rand() % MAX_NAVIOS;
+            solucao.t_atracacao[i][j] = rand() % num_navio;
         }
     }
 
 
     strcpy(arq, "");
-    //testar_dados(arq);
+    testar_dados(arq);
     calcular_FO(solucao);
-    escrever_FO(solucao);
+    //escrever_FO(solucao);
+
+    printf("\n\nsolucao.qtd_berco\n");
+    for(int i = 0; i < num_berco; i ++){
+        printf("%d ", solucao.qtd_berco[i]);
+    }
+    printf("\n");
+    printf("solucao.t_atracacao\n");
+    for(int i = 0; i < num_berco; i ++){
+        for(int j = 0; j < num_navio; j ++){
+            printf("%d ", solucao.t_atracacao[i][j]);
+        }
+        printf("\n");
+    }
     return 0;
 }
 
@@ -60,9 +73,10 @@ int testar_dados(char* arq){
     }else{
         f = fopen(arq, "w");
     }
-
+    fprintf(f,"\033[1mQtd Navios\tQtd de bercos\033[0m\n");
     fprintf(f, "%d\t%d\n", num_navio, num_berco);
 
+    fprintf(f,"\033[1mTempo de cada embarcacao em cada berco: (t_atracacao)\033[0m\n");
     for (int i = 0; i < num_berco; i++){
         for (int j = 0; j < num_navio; j ++){
             fprintf(f, "%d ", temp_atedimento[i][j]);
@@ -70,16 +84,19 @@ int testar_dados(char* arq){
         fprintf(f, "\n");
     }
 
+
+    fprintf(f, "\033[1mAbertura do berco x fechamento do berco (aber_berco, fecha_berco)\033[0m\n");
     for(int i = 0; i < num_berco; i ++){
         fprintf(f, "%d  %d\n", aber_berco[i], fecha_berco[i]);
     }
 
+    fprintf(f, "\033[1mtempo chegada de cada embarcacao:(temp_chegada)\033[0m\n");
     for(int i = 0; i < num_navio; i ++){
         fprintf(f, "%d ", temp_chegada[i]);
     }
 
     fprintf(f, "\n");
-
+    fprintf(f, "\033[1mtempo saida de cada embarcacao:(temp_saida)\033[0m\n");
     for(int i = 0; i < num_navio; i ++){
         fprintf(f, "%d ", temp_saida[i]);
     }
@@ -107,12 +124,13 @@ void calcular_FO(Solucao& s){
             }
 
             if(temp_chegada[navio] > hora){
+                printf("\n ->ENTROU NA CONDIÇÃO!\n");
                 hora = temp_chegada[navio];
             }
             
             // CORREÇÃO: Matriz acessada na ordem correta [berço][navio]
             hora += temp_atedimento[b][navio];
-            
+            printf("\nHora nesse momento berco (%d) | navio (%d) | hora (%d)\n", b, navio, hora);
             // Adiciona o tempo de serviço daquele navio à FO total
             s.fo += hora - temp_chegada[navio];
             
