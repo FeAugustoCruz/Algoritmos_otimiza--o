@@ -12,11 +12,11 @@ int main(void){
 
 
     char arq[50];
-    strcpy(arq, "pmm3.txt");//Vai copiar o texto pnm1 para o array arq!
+    strcpy(arq, "pmm1.txt");//Vai copiar o texto pnm1 para o array arq!
     //OBS caso de erro coloque "..//" para sair do diretório e entrar em outro
     ler_dados(arq);
 
-    ordenar_objetos();
+    /*ordenar_objetos();
     //for(int j = 0; j < num_obj; j ++){
     //    printf("%d ", vet_ind_obj_ord[j]);
     //}
@@ -46,7 +46,7 @@ int main(void){
     //strcpy(arq, "");
     //testar_dados(arq);
 
-    /*SolucaoBIN solB;
+    SolucaoBIN solB;
     memset(&solB, 0, sizeof(SolucaoBIN));//Vai zerar a matriz inteira! função conhecida como (zero-biting)
     solB.mat_sol[0][0] = 1;
     solB.mat_sol[0][1] = 1;
@@ -77,10 +77,34 @@ int main(void){
     }
 
     double tempo = ((double)(clock() - h)) / CLOCKS_PER_SEC;
-    printf("FO %d\tTempo: %.5f\n", sol.fo, tempo);*/
-    return 0;
+    printf("FO %d\tTempo: %.5f\n", sol.fo, tempo);
 
     //escrever_sol(sol);
+    */
+
+    Solucao sol, viz;
+    heu_con_ale(sol);
+    calcular_FO(sol);
+    memcpy(&viz, &sol, sizeof(Solucao));
+    gerar_vizinha(viz);
+    calcular_FO(viz);
+    escrever_sol(sol);
+    escrever_sol(viz);
+
+
+    return 0;
+}
+
+void gerar_vizinha(Solucao& s){//Escolhe um objeto e troque ele de mochila
+    int obj = rand() % num_obj;
+    int moc;
+    do
+    {
+        moc = rand() % (num_moc + 1) - 1;
+    } while (moc == s.vet_sol[obj]);//enqunto ela foir igual a posição anterior!
+    
+    s.vet_sol[obj] = moc;
+
 }
 
 void ordenar_objetos(){

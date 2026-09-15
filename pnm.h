@@ -26,6 +26,7 @@ int vet_cap_moc[MAX_MOC];
 //-> Sempre usar procedimentos em vez de funções! pois funções alocam mais memória
 int vet_ind_obj_ord[MAX_OBJ];
 
+void gerar_vizinha(Solucao& s);
 void heu_con_ale(Solucao& s);
 void heu_con_gul(Solucao& s);
     //essa heuristica utiliza de um percentual de aleatoriedade para gerar outras soluções viáveis
