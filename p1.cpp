@@ -41,7 +41,7 @@ void heu_con_gul(Solucao& s){
     memset(&s.vet_qtd, 0, sizeof(s.vet_qtd));
     int vei = 0;
     for(int i = 0; i < num_cli; i ++){
-        s.mat_sol[vei][s.vet_qtd[s.vet_qtd[vei]]] = i + 1;
+        s.mat_sol[vei][s.vet_qtd[vei]] = i + 1;//->TAVA ERRADO
         s.vet_qtd[vei]++;
         vei++;
         if(vei == num_vei){
@@ -84,14 +84,14 @@ void gerar_vizinha(Solucao& s){//Escolhe um objeto e troque ele de mochila
 }
 
 void remover_cli(Solucao& s, const int& vei, const int& pos){
-    for(int i = pos; i < s.vet_qtd[vei]; i++){
+    for(int i = pos; i < s.vet_qtd[vei] - 1; i++){
         s.mat_sol[vei][i] = s.mat_sol[vei][i + 1];
     }
     s.vet_qtd[vei]--;
 }
 void inserir_cli(Solucao& s, const int& vei, const int& cli){
     int pos = rand() % (s.vet_qtd[vei] + 1);
-    for(int i = s.vet_qtd[vei]; i > pos; i ++){
+    for(int i = s.vet_qtd[vei]; i > pos; i --){
         s.mat_sol[vei][i] = s.mat_sol[vei][i-1];
     }
     s.mat_sol[vei][pos] = cli;
