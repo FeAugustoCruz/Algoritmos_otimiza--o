@@ -38,7 +38,7 @@ void ler_dados(char* arq){
     for(int i = 0; i < num_navio; i ++){
         fscanf(f, "%d", &temp_saida[i]);
     }
-    
+    fclose(f);
 }
 
 void testa_dados(char* arq){
@@ -67,9 +67,13 @@ void testa_dados(char* arq){
     fprintf(f,"\n");
     for(int i = 0; i < num_navio; i ++){
         fprintf(f, "%d ", temp_chegada[i]);
-    }
+    }  
     fprintf(f,"\n");
     for(int i = 0; i < num_navio; i ++){
         fprintf(f, "%d ", temp_saida[i]);
+    }
+
+    if(strcmp(arq, "") != 0){
+        fclose(f);
     }
 }
