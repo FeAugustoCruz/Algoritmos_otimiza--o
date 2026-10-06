@@ -1,6 +1,7 @@
 #define MAX_CONFLI 99
 #define MAX_PONTOS 25
 #define MAX_REGI 4
+#define ALFA 2
 
 typedef struct fSolucao{
     int fo;

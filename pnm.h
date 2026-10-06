@@ -23,7 +23,7 @@ int num_moc;
 int vet_val_obj[MAX_OBJ];
 int vet_pes_obj[MAX_OBJ];
 int vet_cap_moc[MAX_MOC];
-//-> Sempre usar procedimentos em vez de funções! pois funções alocam mais memória
+//vetor de indice de objetos ordenados
 int vet_ind_obj_ord[MAX_OBJ];
 
 void gerar_vizinha(Solucao& s);

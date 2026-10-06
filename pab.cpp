@@ -21,12 +21,12 @@ int main(void){
     }
 
 
-    strcpy(arq, "");
-    testar_dados(arq);
-    calcular_FO(solucao);
-    //escrever_FO(solucao);
+    //strcpy(arq, "");
+    //testar_dados(arq);
+    //calcular_FO(solucao);
+    escrever_FO(solucao);
 
-    printf("\n\nsolucao.qtd_berco\n");
+    /*printf("\n\nsolucao.qtd_berco\n");
     for(int i = 0; i < num_berco; i ++){
         printf("%d ", solucao.qtd_berco[i]);
     }
@@ -37,7 +37,7 @@ int main(void){
             printf("%d ", solucao.t_atracacao[i][j]);
         }
         printf("\n");
-    }
+    }*/
     return 0;
 }
 
@@ -159,3 +159,133 @@ void escrever_FO(Solucao& s){
     }
 }
 
+void gerar_vizinha(Solucao& s){
+    int b1, b2;
+    do{
+        b1 = rand() % num_berco;
+    }while (s.qtd_berco[b1] == 0);
+    
+
+    int i1 = rand() % s.qtd_berco[b1];//sorteia a partir da quntidade de navios no berço
+
+    int navio = s.t_atracacao[b1][i1];
+
+    for(int k = i1; k < s.qtd_berco[b1] - 1; k ++){
+        s.t_atracacao[b1][k] = s.t_atracacao[b1][k + 1];
+    }
+    s.qtd_berco[b1]--;
+
+    int b2 = rand() % num_berco;
+    int pos = rand() % (s.qtd_berco[b2] + 1);
+    for(int k = s.qtd_berco[b2]; k > pos; k --){
+        s.t_atracacao[b2][k] = s.t_atracacao[b2][k-1];
+    }
+
+    s.t_atracacao[b2][pos] = navio;
+    s.qtd_berco[b2]++;
+}
+
+void heuristica_aleatoria(Solucao& s){
+    memset(&s, 0, sizeof(Solucao));
+ 
+    for(int n = 0; n < num_navio; n ++){
+        int cand[MAX_BERCOS];
+        int tam = 0;
+        for(int b = 0; b < num_berco; b ++){
+            if(temp_atedimento[b][n] != 0){
+                cand[tam ++] = b;
+            }
+        }
+ 
+        int b = (tam > 0) ? cand[rand() % tam] : rand() % num_berco;
+        s.t_atracacao[b][s.qtd_berco[b] ++] = n;
+    }
+ 
+    calcular_FO(s);
+}
+
+static void ordenar_por_chegada(int* ordem){
+    for(int i = 0; i < num_navio; i ++){
+        ordem[i] = i;
+    }
+    for(int i = 1; i < num_navio; i ++){
+        int x = ordem[i];
+        int j = i - 1;
+        while(j >= 0 && temp_chegada[ordem[j]] > temp_chegada[x]){
+            ordem[j + 1] = ordem[j];
+            j --;
+        }
+        ordem[j + 1] = x;
+    }
+}
+
+void heuristica_gulosa(Solucao& s){
+    memset(&s, 0, sizeof(Solucao));
+ 
+    int ordem[MAX_NAVIOS];
+    ordenar_por_chegada(ordem);
+ 
+    for(int k = 0; k < num_navio; k ++){
+        int n = ordem[k];
+        int melhor_b = -1;
+ 
+        for(int b = 0; b < num_berco; b ++){
+            if(temp_atedimento[b][n] == 0) continue;     // berco incompativel
+ 
+            if(melhor_b == -1 || temp_atedimento[b][n] < temp_atedimento[melhor_b][n]){
+                melhor_b = b;                            // empate: fica o primeiro berco
+            }
+        }
+ 
+        if(melhor_b == -1){
+            melhor_b = rand() % num_berco;               // nenhum berco compativel
+        }
+        s.t_atracacao[melhor_b][s.qtd_berco[melhor_b] ++] = n;
+    }
+ 
+    calcular_FO(s);
+}
+
+void heuristica_aleatoria_gulosa(Solucao& s){
+    memset(&s, 0, sizeof(Solucao));
+
+    int ordem[MAX_NAVIOS];
+    ordenar_por_chegada(ordem);
+
+    for(int k = 0; k < num_navio; k ++){
+        int n = ordem[k];
+
+        // 1) menor e maior tempo de atendimento entre os berços compatíveis
+        int tmin = 0, tmax = 0, qtd = 0;
+        for(int b = 0; b < num_berco; b ++){
+            int t = temp_atedimento[b][n];
+            if(t == 0) continue;                         // berço incompatível
+
+            if(qtd == 0 || t < tmin) tmin = t;
+            if(qtd == 0 || t > tmax) tmax = t;
+            qtd ++;
+        }
+
+        int escolhido;
+        if(qtd == 0){
+            escolhido = rand() % num_berco;              // nenhum berço compatível
+        }else{
+            // 2) monta a LRC: berços compatíveis "bons o suficiente"
+            double limite = tmin + ALFA * (tmax - tmin);
+            int lrc[MAX_BERCOS];
+            int tam = 0;
+            for(int b = 0; b < num_berco; b ++){
+                int t = temp_atedimento[b][n];
+                if(t != 0 && t <= limite){
+                    lrc[tam ++] = b;
+                }
+            }
+            // 3) sorteia um berço da LRC
+            escolhido = lrc[rand() % tam];
+        }
+
+        s.t_atracacao[escolhido][s.qtd_berco[escolhido] ++] = n;
+    }
+
+    calcular_FO(s);
+}

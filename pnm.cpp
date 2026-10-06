@@ -140,12 +140,12 @@ void heu_con_gul(Solucao& s){
     memset(&s.vet_pesos, 0, sizeof(s.vet_pesos));
     memset(&s.vet_sol, -1, sizeof(s.vet_sol));
     for(int j = 0; j < num_obj; j++){
-        int obj = vet_ind_obj_ord[j];
+        int obj = vet_ind_obj_ord[j];// obj -> indice ordenado 
         for(int i = 0; i < num_moc; i++){
-            if(vet_pes_obj[obj] + s.vet_pesos[i] <= vet_cap_moc[i]){
+            if(vet_pes_obj[obj] + s.vet_pesos[i] <= vet_cap_moc[i]){//tem que caber na capacidade ne KKKKK
                 s.vet_sol[obj] = i;
                 s.vet_pesos[i] += vet_pes_obj[obj];
-                break;
+                break;//-> evita que o mesmo objeto esntre em duas mochinas diferentes!
             }
         }
     }
