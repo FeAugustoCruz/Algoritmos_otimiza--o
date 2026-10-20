@@ -82,17 +82,47 @@ int main(void){
     //escrever_sol(sol);
     */
 
-    Solucao sol, viz;
+    /*Solucao sol, viz;
     heu_con_ale(sol);
     calcular_FO(sol);
     memcpy(&viz, &sol, sizeof(Solucao));
     gerar_vizinha(viz);
     calcular_FO(viz);
     escrever_sol(sol);
-    escrever_sol(viz);
+    escrever_sol(viz);*/
 
+    Solucao spm, smm, sra;
+    heu_con_ale(sra);
+    calcular_FO(sra);
+    memcpy(&spm, &sra, sizeof(Solucao));
+    memcpy(&smm, &sra, sizeof(Solucao));
+    printf("\n\nRD: %d\tMM: %d\tPM: %d\t\n", sra.fo, smm.fo, spm.fo);
+    heu_bl_rd(sra, 3 * num_obj * num_moc);
 
     return 0;
+}
+
+void heu_bl_rd(Solucao&s, int inter)
+{
+    for (int j = 0; j < num_obj; j ++){
+        for(int i = -1; i < num_obj; i ++){
+
+            
+        }
+    }
+
+} 
+
+void heu_bl_pm(Solucao& s)
+{
+
+
+}
+
+void heu_bl_mm(Solucao& s)
+{
+
+
 }
 
 void gerar_vizinha(Solucao& s){//Escolhe um objeto e troque ele de mochila

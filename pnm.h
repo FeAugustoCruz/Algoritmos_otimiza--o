@@ -26,6 +26,11 @@ int vet_cap_moc[MAX_MOC];
 //vetor de indice de objetos ordenados
 int vet_ind_obj_ord[MAX_OBJ];
 
+void heu_bl_rd(Solucao&s, int inter);
+void heu_bl_pm(Solucao&s);
+void heu_bl_mm(Solucao &s);
+
+
 void gerar_vizinha(Solucao& s);
 void heu_con_ale(Solucao& s);
 void heu_con_gul(Solucao& s);
