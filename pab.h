@@ -25,6 +25,8 @@ int fecha_berco[MAX_BERCOS];
 int temp_chegada[MAX_NAVIOS];
 int temp_saida[MAX_NAVIOS];
 
+
+void 
 int ler_dados(char* arq);
 int testar_dados(char* arq);
 void calcular_FO(Solucao& s);
