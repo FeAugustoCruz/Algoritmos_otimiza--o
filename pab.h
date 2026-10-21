@@ -26,7 +26,10 @@ int temp_chegada[MAX_NAVIOS];
 int temp_saida[MAX_NAVIOS];
 
 
-void 
+void heu_bl_rand(Solucao& s, const int iter);
+
+
+
 int ler_dados(char* arq);
 int testar_dados(char* arq);
 void calcular_FO(Solucao& s);

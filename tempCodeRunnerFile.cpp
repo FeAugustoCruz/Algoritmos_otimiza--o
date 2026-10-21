@@ -1,0 +1,1 @@
+emcpy(&sal

@@ -8,23 +8,23 @@
 int main(void){
     srand(time(NULL));
     char arq[50];
-    Solucao solucao;
-    memset(&solucao, 0, sizeof(Solucao));
+    //Solucao solucao;
+    //memset(&solucao, 0, sizeof(Solucao));
 
     strcpy(arq, "i01.txt");
     ler_dados(arq);
-    for(int i = 0; i < num_berco; i ++){
+    /*for(int i = 0; i < num_berco; i ++){
         solucao.qtd_berco[i] = num_navio;
         for(int j = 0; j < num_navio; j ++){
             solucao.t_atracacao[i][j] = rand() % num_navio;
         }
-    }
+    }*/
 
 
     //strcpy(arq, "");
     //testar_dados(arq);
     //calcular_FO(solucao);
-    escrever_FO(solucao);
+    //escrever_FO(solucao);
 
     /*printf("\n\nsolucao.qtd_berco\n");
     for(int i = 0; i < num_berco; i ++){
@@ -38,7 +38,39 @@ int main(void){
         }
         printf("\n");
     }*/
+
+    Solucao sra, spmnd;
+    heuristica_aleatoria(sra);
+    calcular_FO(sra);
+
+    memcpy(&spmnd, &sra, sizeof(Solucao));
+    printf("\n\nOR: %d\t", sra.fo);
+    heu_bl_rand(spmnd, 3* (num_navio *(num_berco -1)));
+
+
+
+
+
+
+
+
+
     return 0;
+}
+
+void heu_bl_rand(Solucao& s, const int inter){
+    Solucao s_aux;
+    INICIO:;
+    for(int i = 0; i < inter; i ++){
+        for(int j = 0; j < num_navio; j ++){
+            for(int k = 0; k < num_berco; k ++){
+                memcpy(&s_aux, &s, sizeof(Solucao));
+                i
+                calcular_FO(s_aux);
+
+        }
+    }
+    }
 }
 
 int ler_dados(char* arq){
