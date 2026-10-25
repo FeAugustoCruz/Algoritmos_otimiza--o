@@ -40,7 +40,7 @@ int main()
 
 
 
-    heu_bl_rand(srand, 200 * num_tri * num_tar);
+    heu_bl_rand(srand, 2000 * num_tri * num_tar);
     printf("busca local aleatoria (fo): %d\n", srand.fo);
 
     heu_bl_mm(smm);
@@ -49,6 +49,8 @@ int main()
     heu_bl_pm(spm);
     printf("busca primeiro melhor (fo): %d\n", spm.fo);
 
+    int po;
+    scanf("%d", &po);
     return 0;
 }
 
