@@ -13,7 +13,7 @@ int main()
 {
     srand(time(NULL));
     char arq[50];
-    strcpy(arq, "csp100.txt");
+    strcpy(arq, "csp25.txt");
     ler_dados(arq);
     // strcpy(arq, "");
     // testar_dados(arq);
@@ -27,7 +27,7 @@ int main()
 
     // UTILIZE ESSA AREA PARA TESTE
 
-    static Solucao sra, srand, smm, spm;
+    static Solucao sra, srand, smm, spm, snd;
     printf("\n\nSOLUCAO ALEATORIA\n");
     heu_cons_aleatoria(sra);
     calcular_fo(sra);
@@ -37,10 +37,11 @@ int main()
     memcpy(&srand, &sra, sizeof(Solucao));
     memcpy(&smm, &sra, sizeof(Solucao));
     memcpy(&spm, &sra, sizeof(Solucao));
+    memcpy(&snd, &sra, sizeof(Solucao));
 
 
 
-    heu_bl_rand(srand, 2000 * num_tri * num_tar);
+    heu_bl_rand(srand, 10 * num_tri * num_tar);
     printf("busca local aleatoria (fo): %d\n", srand.fo);
 
     heu_bl_mm(smm);
@@ -49,8 +50,9 @@ int main()
     heu_bl_pm(spm);
     printf("busca primeiro melhor (fo): %d\n", spm.fo);
 
-    int po;
-    scanf("%d", &po);
+    heu_bl_pm_nd(snd);
+    printf("busca primeiro melhor nao deterministica (fo): %d\n", snd.fo);
+
     return 0;
 }
 
@@ -150,6 +152,52 @@ void heu_bl_pm(Solucao& s)
     }
 
      
+}
+
+void heu_bl_pm_nd(Solucao& s)
+{
+    //vetor contador 
+    int vet_aux[MAX_TAR];
+    for(int i = 0; i < num_tri; i++){
+        vet_aux[i] = i;
+    }
+
+    static Solucao a_aux;
+    int melfo, id;
+    
+    INICIO:;
+    melfo = s.fo;
+
+    for(int j = 0; j < num_tri; j ++){
+        
+        int pos = j + rand() % (num_tri - j);
+        int tri = vet_aux[pos];
+        for (int k = 0; k < s.vet_qtd[tri]; k ++){
+            id = s.mat_sol[tri][k]; 
+
+            for(int l = 0; l < num_tri; l ++){
+                if (l != tri){
+                    memcpy(&a_aux, &s, sizeof(Solucao));
+
+                    remover_tarefa(a_aux, tri, k);
+                    inserir_tarefa(a_aux, l, id);
+
+                    calcular_fo(a_aux);
+                    if(a_aux.fo < melfo){
+                        melfo = a_aux.fo;
+                        memcpy(&s, &a_aux, sizeof(Solucao));
+                        goto INICIO;
+                    }
+                }
+            }
+
+        }
+
+        int aux = vet_aux[j];
+        vet_aux[j] = vet_aux[pos];
+        vet_aux[pos] = aux;     
+    }
+    
 }
 
 void gerar_vizinha(Solucao& s)

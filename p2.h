@@ -47,3 +47,4 @@ void heu_bl_rand(Solucao& s, const int iter);
 void heu_bl_mm(Solucao& s);
 //Heurística busca local primeiro melhor
 void heu_bl_pm(Solucao& s);
+void heu_bl_pm_nd(Solucao& s);

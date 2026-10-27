@@ -27,8 +27,9 @@ int temp_saida[MAX_NAVIOS];
 
 
 void heu_bl_rand(Solucao& s, const int iter);
-
-
+void heu_bl_mm(Solucao&s);
+void heu_bl_pm(Solucao&s);
+void heu_bl_pm_nd(Solucao&s);
 
 int ler_dados(char* arq);
 int testar_dados(char* arq);
@@ -38,3 +39,5 @@ void gerar_vizinha(Solucao& s);
 void heuristica_aleatoria(Solucao& s);
 static void ordenar_por_chegada(int* ordem);
 void heuristica_aleatoria_gulosa(Solucao& s);
+int inserir_tarefa(Solucao& s, const int& trip, const int& tar);
+void remover_tarefa(Solucao& s, const int& trip, const int& pos);
