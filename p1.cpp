@@ -15,7 +15,7 @@ int main()
     strcpy(arq, "instancia-toy.txt");
     ler_dados(arq);
 
-    Solucao sol;
+    /*Solucao sol;
     sol.mat_sol[0][0] = 1;
     sol.mat_sol[0][1] = 3;
     sol.mat_sol[0][2] = 5;
@@ -33,7 +33,10 @@ int main()
 
     gerar_vizinha(sol);
     calcular_fo(sol);
-    escrever(sol, arq); 
+    escrever(sol, arq);*/
+
+    
+
     return 0;
 }
 

@@ -18,7 +18,15 @@ double mat_custo[MAX_CLI][MAX_CLI];
 void calcular_fo(Solucao& s);
 void escrever(Solucao&s, char* arq);
 void ler_dados(char* arq);
-void gerar_vizinha(Solucao& s);
 void remover_cli(Solucao& s, const int& vei, const int& pos);
 void inserir_cli(Solucao& s, const int& vei, const int& cli);
+
+
+void gerar_vizinha(Solucao& s);
 void heu_con_gul(Solucao& s);
+
+
+void heu_bl_rand(Solucao&s, const int inter);
+void heu_bl_mm(Solucao& s);
+void heu_bl_pm(Solucao& s);
+void heu_bl_pm_nd(Solucao& s);

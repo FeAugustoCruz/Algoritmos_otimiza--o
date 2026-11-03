@@ -17,7 +17,7 @@ double mat_custo[MAX_NOS][MAX_NOS];
 
 void heu_bl_rand(Solucao& s, const int inter);
 void heu_bl_mm(Solucao& s);
-void heu_bl_pl(Solucao& s);
+void heu_bl_pm(Solucao& s);
 void heu_bl_pm_nd(Solucao& s);
 
 //----------------------------------------------------------------------------------------------------------

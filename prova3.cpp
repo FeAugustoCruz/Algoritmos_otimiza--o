@@ -11,7 +11,7 @@
 #define MAX(X,Y) ((X > Y) ? X : Y)
 #define MIN(X,Y) ((X < Y) ? X : Y)
 
-int INST      = 1; // 1, 2, 3 ou 4
+int INST      = 2; // 1, 2, 3 ou 4
 double beta   = 1;
 double alfa   = 0.75;
 double lambda = 1;
@@ -34,17 +34,21 @@ int main()
     memcpy(&srand, &s, sizeof(Solucao));
     memcpy(&smm, &s, sizeof(Solucao));
     memcpy(&spm, &s, sizeof(Solucao));
+    memcpy(&snd, &s, sizeof(Solucao));
 
-    heu_bl_rand(srand, 10000 * (num_nos * num_hub));
+    heu_bl_rand(srand, 100 * (num_nos * num_hub));
     printf("Solucao aleatoria (of): %.2f\n", srand.fo);
 
     heu_bl_mm(smm);
     printf("Solucao melhor melhor (of): %.2f\n", smm.fo);
 
-    heu_bl_mm(spm);
+    heu_bl_pm(spm);
     printf("Solucao primeiro melhor (of): %.2f\n", spm.fo);
 
-	// UTILIZE ESSA �REA PARA TESTE
+    heu_bl_pm_nd(snd);
+    printf("Solucao primeiro melhor nd (of): %.2f\n", snd.fo);
+
+	// UTILIZE ESSA ÁREA PARA TESTE
 
     //---
     return 0;
@@ -92,8 +96,9 @@ void heu_bl_mm(Solucao& s)
                 s.vet_sol[i] = aux;
 
                 calcular_fo(s);
+                
                 if (s.fo < mel_fo)
-                {
+                { 
                     mel_fo = s.fo;
                     mel_hub = j;
                     mel_no_hub = i;
@@ -102,27 +107,28 @@ void heu_bl_mm(Solucao& s)
 
                 aux = s.vet_sol[j];
                 s.vet_sol[j] = s.vet_sol[i];
-                s.vet_sol[i] = aux;
+                s.vet_sol[i] = aux; 
 
-                calcular_fo(s);
+    
             }
         }
 
-        if (!flag)
+        if (!flag){
+            s.fo = mel_fo;
             break;
+        }
 
         int aux = s.vet_sol[mel_hub];
         s.vet_sol[mel_hub] = s.vet_sol[mel_no_hub];
         s.vet_sol[mel_no_hub] = aux;
 
-        calcular_fo(s);
+        calcular_fo(s); 
     }
 }
 
 
-void heu_bl_pl(Solucao& s)
+void heu_bl_pm(Solucao& s)
 {
-    int mel_hub, mel_no_hub;
     double mel_fo;
 
     INICIO:;
@@ -138,11 +144,10 @@ void heu_bl_pl(Solucao& s)
             s.vet_sol[i] = aux;
 
             calcular_fo(s);
+
             if (s.fo < mel_fo)
             {
-                int aux = s.vet_sol[j];
-                s.vet_sol[j] = s.vet_sol[i];
-                s.vet_sol[i] = aux;
+
                 goto INICIO;
             }
 
@@ -150,8 +155,53 @@ void heu_bl_pl(Solucao& s)
             s.vet_sol[j] = s.vet_sol[i];
             s.vet_sol[i] = aux;
 
-            calcular_fo(s);
+            s.fo = mel_fo;
         }
+    }
+}
+
+void heu_bl_pm_nd(Solucao& s)
+{
+    double mel_fo;
+    int vet_aux[MAX_NOS];
+
+    for(int i = 0; i < num_hub; i++){
+        vet_aux[i] = i;
+    }
+
+    INICIO:;
+
+    mel_fo = s.fo;
+
+    for (int j = 0; j < num_hub; j++)
+    {
+        int pos = j + rand() % (num_hub - j);
+        int posi_hub = vet_aux[pos];
+
+        for (int i = num_hub; i < num_nos; i++)
+        {
+            int aux = s.vet_sol[posi_hub];
+            s.vet_sol[posi_hub] = s.vet_sol[i];
+            s.vet_sol[i] = aux;
+
+            calcular_fo(s);
+
+            if (s.fo < mel_fo)
+            {
+
+                goto INICIO;
+            }
+
+            aux = s.vet_sol[posi_hub];
+            s.vet_sol[posi_hub] = s.vet_sol[i];
+            s.vet_sol[i] = aux;
+
+            s.fo = mel_fo;
+        }
+
+        int aux = vet_aux[j];
+        vet_aux[j] = vet_aux[pos];
+        vet_aux[pos] = aux;
     }
 }
 
