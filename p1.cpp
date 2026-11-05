@@ -34,10 +34,141 @@ int main()
     gerar_vizinha(sol);
     calcular_fo(sol);
     escrever(sol, arq);*/
+    static Solucao sra, srand, smm, spm, snd;
+    printf("SOLUCAO ALEATORIA:\n");
+    heuristica_aleatoria(sra);
+    calcular_fo(sra);
+
+
+    printf("orig (fo): %.2f\n", sra.fo);
+    memcpy(&srand, &sra, sizeof(Solucao));
+    memcpy(&smm, &sra, sizeof(Solucao));
+    memcpy(&spm, &sra, sizeof(Solucao));
+    memcpy(&snd, &sra, sizeof(Solucao));
+
+    heu_bl_rand(srand, 3 * (num_cli * num_vei));
+    printf("Solucao aleatoria (fo): %.2f\n", srand.fo);
+
+    heu_bl_mm(smm);
+    printf("Solucao melhor melhor (fo): %.2f\n", smm.fo);
 
     
 
     return 0;
+}
+
+void heu_bl_rand(Solucao& s, const int inter)
+{   
+    Solucao s_aux;
+
+    INICIO:;
+
+    for(int i = 0; i < inter; i++){
+        memcpy(&s_aux, &s, sizeof(Solucao));
+        gerar_vizinha(s_aux);
+
+        calcular_fo(s_aux);
+        if (s_aux.fo < s.fo){
+            memcpy(&s, &s_aux, sizeof(Solucao));
+            goto INICIO;
+
+        }
+
+    }
+
+}
+
+void heu_bl_mm(Solucao &s){
+    static Solucao s_melhor, s_aux;
+
+    double mel_fo;
+
+    while (1)
+    {
+        int flag = 0;
+        mel_fo = s.fo;
+
+        memcpy(&s_melhor, &s, sizeof(Solucao));
+
+        for(int i = 0; i < num_vei; i ++)
+        {
+            for(int j = 0; j < s.vet_qtd[i]; j ++)
+            {
+                int id = s.mat_sol[i][j];
+
+                for(int l = 0; l < num_vei; l ++){
+                    for (int k = 0; k < s.vet_qtd[i]; k++)
+                    {
+                        memcpy(&s_aux, &s, sizeof(Solucao));
+
+                        remover_cli(s_aux, i, j);
+                        inserir_cli_det(s_aux, l, k, id);
+                        calcular_fo(s_aux);
+                        if(s_aux.fo < mel_fo)
+                        {
+                            mel_fo = s_aux.fo;
+                            flag = 1;
+                            memcpy(&s_melhor, &s_aux, sizeof(Solucao));
+                        }
+
+                    }
+                    
+                }
+            }
+        }
+
+        if (flag)
+        {
+            memcpy(&s, &s_melhor, sizeof(Solucao));
+        }else
+        {
+            break;
+        }
+        
+        
+    }
+    
+}
+
+void heu_bl_pm(Solucao& s)
+{
+    static Solucao s_melhor, s_aux;
+
+    double mel_fo;
+
+    int flag = 0;
+    mel_fo = s.fo;
+
+    INICIO:;
+
+    memcpy(&s_melhor, &s, sizeof(Solucao));
+
+    for(int i = 0; i < num_vei; i ++)
+    {
+        for(int j = 0; j < s.vet_qtd[i]; j ++)
+        {
+            int id = s.mat_sol[i][j];
+
+            for(int l = 0; l < num_vei; l ++){
+                for (int k = 0; k < s.vet_qtd[i]; k++)
+                {
+                    memcpy(&s_aux, &s, sizeof(Solucao));
+
+                    remover_cli(s_aux, i, j);
+                    inserir_cli_det(s_aux, l, k, id);
+                    calcular_fo(s_aux);
+                    if(s_aux.fo < mel_fo)
+                    {
+                        mel_fo = s_aux.fo;
+                        memcpy(&s_melhor, &s_aux, sizeof(Solucao));
+                        goto INICIO;
+                    }
+
+                }
+                
+            }
+        }
+    }
 }
 
 void heu_con_gul(Solucao& s){
