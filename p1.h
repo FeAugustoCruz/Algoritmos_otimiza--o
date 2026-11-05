@@ -20,13 +20,16 @@ void escrever(Solucao&s, char* arq);
 void ler_dados(char* arq);
 void remover_cli(Solucao& s, const int& vei, const int& pos);
 void inserir_cli(Solucao& s, const int& vei, const int& cli);
-
+void inserir_cli_det(Solucao& s, const int& vei, const int& pos, const int& cli);
 
 void gerar_vizinha(Solucao& s);
 void heu_con_gul(Solucao& s);
+void heuristica_aleatoria_gulosa(Solucao& s);
+void heuristica_aleatoria(Solucao& s);
 
 
-void heu_bl_rand(Solucao&s, const int inter);
-void heu_bl_mm(Solucao& s);
-void heu_bl_pm(Solucao& s);
+void heu_bl_rand(Solucao &s, const int inter);
+void heu_bl_mm(Solucao &s);
+void heu_bl_pm(Solucao &s);
 void heu_bl_pm_nd(Solucao& s);
+
