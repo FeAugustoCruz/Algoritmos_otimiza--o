@@ -46,13 +46,17 @@ int main()
     memcpy(&spm, &sra, sizeof(Solucao));
     memcpy(&snd, &sra, sizeof(Solucao));
 
-    heu_bl_rand(srand, 3 * (num_cli * num_vei));
+    heu_bl_rand(srand, 10000 * (num_cli * num_vei));
     printf("Solucao aleatoria (fo): %.2f\n", srand.fo);
 
     heu_bl_mm(smm);
     printf("Solucao melhor melhor (fo): %.2f\n", smm.fo);
 
-    
+    heu_bl_pm(spm);
+    printf("Solucao primeiro melhor (fo): %.2f\n", spm.fo);
+
+    heu_bl_pm_nd(snd);
+    printf("Solucao primeiro melhor nao deterministico (fo) : %.2f\n", snd.fo);
 
     return 0;
 }
@@ -132,16 +136,13 @@ void heu_bl_mm(Solucao &s){
 
 void heu_bl_pm(Solucao& s)
 {
-    static Solucao s_melhor, s_aux;
+    static Solucao s_aux;
 
     double mel_fo;
 
-    int flag = 0;
-    mel_fo = s.fo;
-
     INICIO:;
 
-    memcpy(&s_melhor, &s, sizeof(Solucao));
+    mel_fo = s.fo;
 
     for(int i = 0; i < num_vei; i ++)
     {
@@ -160,7 +161,7 @@ void heu_bl_pm(Solucao& s)
                     if(s_aux.fo < mel_fo)
                     {
                         mel_fo = s_aux.fo;
-                        memcpy(&s_melhor, &s_aux, sizeof(Solucao));
+                        memcpy(&s, &s_aux, sizeof(Solucao));
                         goto INICIO;
                     }
 
@@ -168,6 +169,59 @@ void heu_bl_pm(Solucao& s)
                 
             }
         }
+    }
+}
+
+void heu_bl_pm_nd(Solucao& s)
+{
+    int vet_aux[MAX_VEI];
+
+    for (int i = 0; i < num_vei; i ++)
+    {
+        vet_aux[i] = i;
+    }
+
+    static Solucao s_aux;
+
+    double mel_fo;
+
+    INICIO:;
+
+    mel_fo = s.fo;
+
+    for(int i = 0; i < num_vei; i ++)
+    {
+
+        int pos = i + rand() % (num_vei - i);
+        int vei = vet_aux[pos];
+
+        for(int j = 0; j < s.vet_qtd[vei]; j ++)
+        {
+            int id = s.mat_sol[vei][j];
+
+            for(int l = 0; l < num_vei; l ++){
+                for (int k = 0; k < s.vet_qtd[vei]; k++)
+                {
+                    memcpy(&s_aux, &s, sizeof(Solucao));
+
+                    remover_cli(s_aux, vei, j);
+                    inserir_cli_det(s_aux, l, k, id);
+                    calcular_fo(s_aux);
+                    if(s_aux.fo < mel_fo)
+                    {
+                        mel_fo = s_aux.fo;
+                        memcpy(&s, &s_aux, sizeof(Solucao));
+                        goto INICIO;
+                    }
+
+                }
+                
+            }
+        }
+
+        int aux = vet_aux[i];
+        vet_aux[i] = vet_aux[pos];
+        vet_aux[pos] = aux;
     }
 }
 
@@ -183,6 +237,81 @@ void heu_con_gul(Solucao& s){
         }
     }
 }
+
+void heuristica_aleatoria(Solucao& s)
+{
+    memset(&s, 0, sizeof(Solucao));
+
+    for (int cli = 1; cli <= num_cli; ++cli)
+    {
+        int vei = rand() % num_vei;
+        inserir_cli(s, vei, cli);
+    }
+
+    calcular_fo(s);
+}
+
+void heuristica_aleatoria_gulosa(Solucao& s)
+{
+    memset(&s, 0, sizeof(Solucao));
+
+    int ordem[MAX_CLI];
+
+    for (int i = 0; i < num_cli; ++i)
+        ordem[i] = i + 1;
+
+    // Embaralhamento de Fisher-Yates para variar a ordem de insercao.
+    for (int i = num_cli - 1; i > 0; --i)
+    {
+        int j = rand() % (i + 1);
+        int aux = ordem[i];
+        ordem[i] = ordem[j];
+        ordem[j] = aux;
+    }
+
+    for (int i = 0; i < num_cli; ++i)
+    {
+        const int cli = ordem[i];
+        double melhor_fo = HUGE_VAL;
+        Solucao melhor_solucao;
+        int encontrou = 0;
+        int quantidade_empates = 0;
+
+        for (int vei = 0; vei < num_vei; ++vei)
+        {
+            // A posicao pode variar de 0 ate vet_qtd[vei] (insercao no final).
+            for (int pos = 0; pos <= s.vet_qtd[vei]; ++pos)
+            {
+                Solucao candidata;
+                memcpy(&candidata, &s, sizeof(Solucao));
+
+                inserir_cli_det(candidata, vei, pos, cli);
+                calcular_fo(candidata);
+
+                if (!encontrou || candidata.fo < melhor_fo - 1e-9)
+                {
+                    melhor_fo = candidata.fo;
+                    memcpy(&melhor_solucao, &candidata, sizeof(Solucao));
+                    encontrou = 1;
+                    quantidade_empates = 1;
+                }
+                else if (fabs(candidata.fo - melhor_fo) <= 1e-9)
+                {
+                    // Escolha aleatoria entre insercoes com o mesmo custo.
+                    ++quantidade_empates;
+                    if (rand() % quantidade_empates == 0)
+                        memcpy(&melhor_solucao, &candidata, sizeof(Solucao));
+                }
+            }
+        }
+
+        if (encontrou)
+            memcpy(&s, &melhor_solucao, sizeof(Solucao));
+    }
+
+    calcular_fo(s);
+}
+
 
 void gerar_vizinha(Solucao& s){//Escolhe um objeto e troque ele de mochila
     int op = rand() % 2;
@@ -232,6 +361,17 @@ void inserir_cli(Solucao& s, const int& vei, const int& cli){
     s.vet_qtd[vei]++;
 
 }
+
+void inserir_cli_det(Solucao& s, const int& vei, const int& pos, const int& cli)
+{
+    for(int i = s.vet_qtd[vei]; i > pos; i --){
+        s.mat_sol[vei][i] = s.mat_sol[vei][i-1];
+    }
+    s.mat_sol[vei][pos] = cli;
+    s.vet_qtd[vei]++;
+}
+
+
 void calcular_fo(Solucao& s)
 {
     s.fo = 0;
